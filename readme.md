@@ -1,4 +1,4 @@
-Chrome extension starting bundle
+Spacecamp
 ================================
 
-A basic starting point for all chrome extensions. Not all the files are needed for every extension, but the core basics are covered.
+Spacecamp is a Chrome extension that adds scrum like estimations to your Basecamp todo items and lists.  
