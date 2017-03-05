@@ -1,7 +1,7 @@
 {
   "name": "Spacecamp",
-  "version": "0.1",
-  "description": "Task estimation for basecamp",
+  "version": "0.2",
+  "description": "Task estimation for basecamp 3",
   "manifest_version": 2,
   "browser_action": {
     "name": "Manipulate DOM",
@@ -11,6 +11,6 @@
   "content_scripts": [ {
     "js": [ "jquery-2.0.2.min.js", "background.js" ],
     "css": ["customStyles.css"],
-    "matches": [ "http://basecamp.com/*", "https://basecamp.com/*"]
+    "matches": [ "http://3.basecamp.com/*", "https://3.basecamp.com/*"]
   }]
 }

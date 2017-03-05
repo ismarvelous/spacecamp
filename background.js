@@ -8,7 +8,7 @@
 			var todo = 0;
 			var regExp = /\(([^)]+)\)/;
 
-			$(this).find("ul.todos span.content:visible").each(function (index) {
+			$(this).find("ul.todos a:visible").each(function (index) {
 
 				var matches = regExp.exec($(this).text());
 
@@ -22,7 +22,7 @@
 			});
 
 
-			$(this).find("ul.completed span.content").each(function (index) {
+			$(this).find("ul.completed a").each(function (index) {
 
 				var matches = regExp.exec($(this).text());
 
@@ -35,7 +35,7 @@
 				}
 			});
 
-			$(this).find("h3").append(" (" + todo + "/" + done + ")");
+			$(this).find("h3 a").append(" (" + todo + "/" + done + ")");
 		});
 	};
 	
