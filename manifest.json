@@ -1,6 +1,6 @@
 {
   "name": "Spacecamp",
-  "version": "0.2",
+  "version": "0.3",
   "description": "Task estimation for basecamp 3",
   "manifest_version": 2,
   "browser_action": {
