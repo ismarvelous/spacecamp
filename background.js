@@ -1,7 +1,8 @@
 
 (function() {
 
-	var calculate = function () {
+	var calculate = function () { // progress calculation..
+
 		$("article.todolist").each(function (index) {
 
 			var done = 0;
@@ -39,7 +40,9 @@
 		});
 	};
 
-	var labelit = function() {
+	var labelit = function() { // label it
+
+		const timeChimpUrl = "https://app.timechimp.com/?text={text}#/registration/time/day";
 
 		var labels = "";
 
@@ -53,7 +56,15 @@
 
 			for(i=0; i<matches.length; i++)
 			{
-				labels = labels + matches[i] + " "
+				if(timeChimpUrl.length > 0)
+				{
+					var url = timeChimpUrl.replace("{text}", matches[i].replace("#", "%23"));
+					labels = labels +  "<a href='"+ url +"'>" + matches[i] + "</a>";
+				}
+				else
+				{
+					labels = labels + matches[i];
+				}
 			}
 			console.log(labels);
 		}
@@ -91,15 +102,31 @@
 		
 			$("section.todo-perma__details").append(html);
 		});
+	}
 
-		
-		
+	var addDescription = function(){ //timechimp automatic description
+
+		var urlParams = new URLSearchParams(window.location.search);
+
+		if(urlParams === undefined && !urlParams.has("text"))
+			return;
+
+		$("textarea[ng-model='vm.time.notes']").val(urlParams.get("text"));
 	}
 	
 	var init = function()
 	{
-		calculate(); //run calculate onload..
-		labelit();
+		var isBasecamp = window.location.hostname.toLowerCase() !== "app.timechimp.com";
+
+		if(isBasecamp) //basecamp
+		{
+			calculate(); //run calculate onload..
+			labelit();
+		}
+		else //timechimp
+		{
+			addDescription();
+		}
 	};
 
 
