@@ -116,6 +116,8 @@
 			return;
 
 		$("textarea[ng-model='vm.time.notes']").val(urlParams.get("text"));
+		$("textarea[ng-model='vm.time.notes']")[0].dispatchEvent(new Event("change",  { bubbles: true }));
+		
 	}
 	
 	global.initializeSpaceCamp = function()
@@ -132,8 +134,6 @@
 			labelit();
 		}
 	};
-
-	
 
 })(jQuery, window, document);
 
