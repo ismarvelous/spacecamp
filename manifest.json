@@ -1,7 +1,7 @@
 {
   "name": "Spacecamp",
   "version": "1.1.5",
-  "description": "Extra project management while using Basecamp 3.",
+  "description": "Extra project management power for Basecamp 3 and Timechimp users.",
   "manifest_version": 2,
   "browser_action": {
     "name": "Manipulate DOM",
