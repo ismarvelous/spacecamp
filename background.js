@@ -1,7 +1,7 @@
+(function($, global, document) {
 
-(function() {
+	var calculate = function () { // progress calculation..
 
-	var calculate = function () {
 		$("article.todolist").each(function (index) {
 
 			var done = 0;
@@ -21,7 +21,6 @@
 				}
 			});
 
-
 			$(this).find("ul.completed a").each(function (index) {
 
 				var matches = regExp.exec($(this).text());
@@ -39,23 +38,22 @@
 		});
 	};
 
-	var labelit = function() {
+	var labelit = function() { // label its
 
-		var labels = "";
+		const timeUrlPattern = "https://app.timechimp.com/?text={labels}%20|%20{title}%20|%20Opmerkingen%3A#/registration/time/day";
+		
+		var labels = [];
 
 		var appendLabel = function(html)
 		{
-			var re = /(#(\w+)([-](\w+))*)/g, match, matches = [];
-			
-			while (match = re.exec(html)) {
-  				matches.push(match[1]);
-			}
+			var re = /(#(\w+)([-](\w+))*)/g;
 
-			for(i=0; i<matches.length; i++)
-			{
-				labels = labels + matches[i] + " "
+			var match = null;
+			while (match = re.exec(html)) {
+  				labels.push(match[1]);
 			}
-			console.log(labels);
+			
+			//console.log(labels);
 		}
 
 		$("div.thread-entry__content").each(function (index){
@@ -70,12 +68,17 @@
 			dom.find("div.thread-entry__content").each(function (index){
 				//console.log($(this).html());
 				appendLabel($(this).html());
-				console.log(labels);
+				//console.log(labels);
 			});
 		})
 		.always(function(){
 			
-			console.log("Finished!");
+			//console.log("Finished!");
+
+			var jLabels = labels.join(", ");
+			var url = timeUrlPattern;
+			url = url.replace("{labels}", jLabels.replaceAll("#", "%23").replaceAll(",", "%2C").replaceAll(" ", "%20"));
+			url = url.replace("{title}", $(document).find("title").text());
 
 			var html = `
 				<div class="todos-form__field">
@@ -83,7 +86,19 @@
 						<strong>Labels</strong>
 					</div>
 					<div class="todos-form__field-content">
-							<div>`+ labels +`</div>
+							<div>`+ jLabels + `</div>
+						</div>
+					</div>
+				</div>
+			`;
+
+			var html = html + `
+				<div class="todos-form__field">
+					<div class="todos-form__field-label todos-form__field-label--notes">
+						<strong>Track time</strong>
+					</div>
+					<div class="todos-form__field-content">
+							<div><a href="` + url + `" target="time"><img src="`+ chrome.extension.getURL("icon.png") + `" style="width: 25px; margin-top:10px"/></a></div>
 						</div>
 					</div>
 				</div>
@@ -91,23 +106,39 @@
 		
 			$("section.todo-perma__details").append(html);
 		});
+	}
 
-		
+	var addDescription = function(){ //timechimp automatic description
+
+		var urlParams = new URLSearchParams(window.location.search);
+
+		if(urlParams === undefined && !urlParams.has("text"))
+			return;
+
+		$("textarea[ng-model='vm.time.notes']").val(urlParams.get("text"));
+		$("textarea[ng-model='vm.time.notes']")[0].dispatchEvent(new Event("change",  { bubbles: true }));
 		
 	}
 	
-	var init = function()
+	global.initializeSpaceCamp = function()
 	{
-		calculate(); //run calculate onload..
-		labelit();
+		var isTimechimp = window.location.hostname.toLowerCase() === "app.timechimp.com";
+
+		if(isTimechimp)
+		{
+			addDescription();
+		}
+		else //basecamp
+		{
+			calculate(); //run calculate onload..
+			labelit();
+		}
 	};
 
+})(jQuery, window, document);
 
-
-	$(document).ready(function() {
-		init();
-	});
-
-})();
+$(document).ready(function() {
+	window.initializeSpaceCamp();
+});
 
 

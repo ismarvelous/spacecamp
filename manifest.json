@@ -1,16 +1,19 @@
 {
   "name": "Spacecamp",
-  "version": "0.3",
-  "description": "Task estimation for basecamp 3",
+  "version": "1.1.5",
+  "description": "Extra project management while using Basecamp 3.",
   "manifest_version": 2,
   "browser_action": {
     "name": "Manipulate DOM",
-    "icons": ["icon.png"],
     "default_icon": "icon.png"
   },
   "content_scripts": [ {
+    "run_at": "document_idle",
     "js": [ "jquery-2.0.2.min.js", "background.js" ],
     "css": ["customStyles.css"],
-    "matches": [ "http://3.basecamp.com/*", "https://3.basecamp.com/*"]
-  }]
+    "matches": [ "https://3.basecamp.com/*", "https://app.timechimp.com/*"]
+  }],
+  "web_accessible_resources": [
+    "*.png"
+  ]
 }
