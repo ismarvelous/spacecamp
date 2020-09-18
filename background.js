@@ -155,20 +155,16 @@
 		
 	}
 
-	var mutationObserver = new MutationObserver(function(mutations) {
-		mutations.forEach(function(mutation) {
-			calculate(); //run calculate onload..
-			labelit();
-		});
-
-		mutationObserver.observe(document.querySelector('head > title'), { subtree: true, characterData: true, childList: true });
-	  });
+	var mCallback = function (mutations) {
+		for (let mutation of mutations) {
+			//alert("CHANGED!");
+			console.log(mutation);
+		}
+	}
 	
 	global.initializeSpaceCamp = function()
 	{
 		var isTimechimp = window.location.hostname.toLowerCase() === "app.timechimp.com";
-
-		mutationObserver.observe(document.querySelector('head > title'), { subtree: true, characterData: true, childList: true });
 
 		if(isTimechimp)
 		{
@@ -187,5 +183,8 @@ $(document).ready(function() {
 	console.log("initialize");
 	window.initializeSpaceCamp();
 });
-  
 
+$(document).on('turbolinks:load', function() {
+	console.log("re-loaded");
+	window.initializeSpaceCamp();
+});
