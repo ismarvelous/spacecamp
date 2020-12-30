@@ -1,64 +1,70 @@
 (function($, global, document) {
 
+	const timeUrlPattern = "https://app.timechimp.com/?text={labels}%20|%20{title}%20|%20Opmerkingen%3A#/registration/time/day";
+
+	var appendLabel = function(html, labels)
+	{
+		var re = /(#(\w+)([-](\w+))*)/g;
+
+		var match = null;
+		while (match = re.exec(html.replace(/<[^>]*>?/gm, ''))) {
+			if(!match[1].startsWith("#updateLinkRel"))
+			{
+				labels.push(match[1]);
+			}
+		}
+		
+		//console.log(labels);
+	}
+
 	var calculate = function () { // progress calculation..
 
 		$("article.todolist").each(function (index) {
 
-			var done = 0;
-			var todo = 0;
-			var regExp = /\(([^)]+)\)/;
+			if(!$(this).find("h3 a.todolist__permalink").text().endsWith(")")) {
 
-			$(this).find("ul.todos a:visible").each(function (index) {
+				var done = 0;
+				var todo = 0;
+				var regExp = /\(([^)]+)\)/;
 
-				var matches = regExp.exec($(this).text());
+				$(this).find("ul.todos a:visible").each(function (index) {
 
-				if (matches) {
-					matches.forEach(function (entry) {
-						if (parseInt(entry)) {
-							todo = todo + parseInt(entry);
-						}
-					});
-				}
-			});
+					var matches = regExp.exec($(this).text());
 
-			$(this).find("ul.completed a").each(function (index) {
+					if (matches) {
+						matches.forEach(function (entry) {
+							if (parseInt(entry)) {
+								todo = todo + parseInt(entry);
+							}
+						});
+					}
+				});
 
-				var matches = regExp.exec($(this).text());
+				$(this).find("ul.completed a").each(function (index) {
 
-				if (matches) {
-					matches.forEach(function (entry) {
-						if (parseInt(entry)) {
-							done = done + parseInt(entry);
-						}
-					});
-				}
-			});
+					var matches = regExp.exec($(this).text());
 
-			$(this).find("h3 a.todolist__permalink").append(" (" + todo + "/" + done + ")");
+					if (matches) {
+						matches.forEach(function (entry) {
+							if (parseInt(entry)) {
+								done = done + parseInt(entry);
+							}
+						});
+					}
+				});
+
+				$(this).find("h3 a.todolist__permalink").append(" (" + todo + "/" + done + ")");
+			}
 		});
 	};
 
 	var labelit = function() { // label its
 
-		const timeUrlPattern = "https://app.timechimp.com/?text={labels}%20|%20{title}%20|%20Opmerkingen%3A#/registration/time/day";
-		
 		var labels = [];
-
-		var appendLabel = function(html)
-		{
-			var re = /(#(\w+)([-](\w+))*)/g;
-
-			var match = null;
-			while (match = re.exec(html)) {
-  				labels.push(match[1]);
-			}
-			
-			//console.log(labels);
-		}
 
 		$("div.thread-entry__content").each(function (index){
 			//console.log($(this).html());
-			appendLabel($(this).html());
+			appendLabel($(this).html(), labels);
 		});
 
 		var render = function()
@@ -69,7 +75,7 @@
 			var jLabels = labels.join(", ");
 			var url = timeUrlPattern;
 			url = url.replace("{labels}", jLabels.replaceAll("#", "%23").replaceAll(",", "%2C").replaceAll(" ", "%20"));
-			url = url.replace("{title}", $(document).find("title").text().replaceAll("#", "%23").replaceAll(",", "%2C").replaceAll(" ", "%20"));
+			url = url.replace("{title}", $(document).find("title").text().replaceAll("#", "%23").replaceAll(",", "%2C").replaceAll(" ", "%20").replaceAll("&", "and"));
 
 			var html = `
 				<div id="spcamp-labels" class="todos-form__field">
@@ -129,7 +135,7 @@
 				var dom = $(data);
 				dom.find("div.thread-entry__content").each(function (index){
 					//console.log($(this).html());
-					appendLabel($(this).html());
+					appendLabel($(this).html(), labels);
 					//console.log(labels);
 				});
 			})
@@ -143,6 +149,45 @@
 		}
 	}
 
+	var labelitTicket = function() { // label its
+		
+		var labels = [];
+
+		$(".messageBody").each(function (index){
+			//console.log($(this).html());
+			appendLabel($(this).html(), labels);
+		});
+
+		var render = function()
+		{
+			
+			//console.log("Finished!");
+
+			var jLabels = labels.join(", ");
+			var url = timeUrlPattern;
+			url = url.replace("{labels}", jLabels.replaceAll("#", "%23").replaceAll(",", "%2C").replaceAll(" ", "%20"));
+			url = url.replace("{title}", $(document).find("title").text().replaceAll("#", "%23").replaceAll(",", "%2C").replaceAll(" ", "%20").replaceAll("&", "and"));
+
+			var menuitm = `
+				<span id="spcamp-time" class="badge">
+					<a href="` + url + `">Time</a>
+				</span>
+			`;
+
+			if($("#spcamp-time").length > 0)
+			{
+				$("#spcamp-time").replaceWith(menuitm);
+			}
+			else
+			{
+				$("#tkHeader > hgroup > p").append(menuitm);
+			}
+
+		}
+
+		render();
+	}
+
 	var addDescription = function(){ //timechimp automatic description
 
 		var urlParams = new URLSearchParams(window.location.search);
@@ -154,26 +199,21 @@
 		$("textarea[ng-model='vm.time.notes']")[0].dispatchEvent(new Event("change",  { bubbles: true }));
 		
 	}
-
-	var mCallback = function (mutations) {
-		for (let mutation of mutations) {
-			//alert("CHANGED!");
-			console.log(mutation);
-		}
-	}
 	
 	global.initializeSpaceCamp = function()
 	{
-		var isTimechimp = window.location.hostname.toLowerCase() === "app.timechimp.com";
-
-		if(isTimechimp)
+		if(window.location.hostname.toLowerCase() === "app.timechimp.com")
 		{
 			addDescription();
 		}
-		else //basecamp
+		else if(window.location.hostname.toLowerCase() === "3.basecamp.com") //basecamp
 		{
 			calculate(); //run calculate onload..
 			labelit();
+		}
+		else if(window.location.hostname.toLowerCase() === "secure.helpscout.net")
+		{
+			labelitTicket();
 		}
 	};
 

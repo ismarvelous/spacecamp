@@ -11,7 +11,7 @@
     "run_at": "document_idle",
     "js": [ "jquery-2.0.2.min.js", "background.js" ],
     "css": ["customStyles.css"],
-    "matches": [ "https://3.basecamp.com/*", "https://app.timechimp.com/*"]
+    "matches": [ "https://3.basecamp.com/*", "https://app.timechimp.com/*", "https://secure.helpscout.net/conversation/*"]
   }],
   "web_accessible_resources": [
     "*.png"
