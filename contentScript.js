@@ -153,7 +153,9 @@ function renderHelpscoutTimeButton() {
     const render = () => {
         const jLabels = labels.join(", ");
         let text = textPattern.replace("{labels}", jLabels)
-                                .replace("{title}", document.title.replace("&", "and"));
+                              .replace("{title}", document.title.replace("&", "and").replace("'", ""));
+
+        console.log(text)
 
         const menuitm = `
             <span id="spcamp-time" class="badge">

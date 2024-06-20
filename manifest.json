@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Spacecamp",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Extra project management power for Basecamp 3, Helpscout and Timechimp users.",
   "permissions": ["activeTab"],
   "content_scripts": [
