@@ -40,6 +40,8 @@ function handleNavigationItemClicked(clickedItem) {
     }
 }
 
+// ----- Basecamp specific -----
+
 function renderBasecampLabels() {
     const labels = [];
 
@@ -130,6 +132,8 @@ function calculateTotal(selector, todolist, regExp) {
     });
     return total;
 }
+
+// ----- Utils -----
 
 function isVisible(element) {
     return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
