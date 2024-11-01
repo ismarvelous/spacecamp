@@ -6,6 +6,9 @@ let basecampClipboardText = "";
 
 window.addEventListener('load', () => {
     initializeSpaceCamp();
+
+    const manifest = chrome.runtime.getManifest();
+    console.info(`Initialized ${manifest.name} - Manifest Version: ${manifest.version}`);
 });
 
 document.addEventListener('turbo:load', () => {
@@ -29,13 +32,11 @@ function initializeSpaceCamp() {
 function handleNavigationItemClicked(clickedItem) {
     if (clickedItem === "register-time") {
         if (hostName === "3.basecamp.com") {
-            copyToClipboard(basecampClipboardText);
+            copyToClipboardAndRedirect(basecampClipboardText);
         }
         else {
-            copyToClipboard(createClipboardText([], document.title));
+            copyToClipboardAndRedirect(createClipboardText([], document.title));
         }
-
-       chrome.runtime.sendMessage({ action: "openTimeRegistrationUrl", url: timeRegistrationUrl });
     }
 }
 
@@ -134,10 +135,10 @@ function isVisible(element) {
     return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }
 
-function copyToClipboard(text) {
+function copyToClipboardAndRedirect(text) {
     const focusListener = () => {
         navigator.clipboard.writeText(text).then(() => {
-            console.log('Text copied to clipboard after focus:', text);
+            chrome.runtime.sendMessage({ action: "openTimeRegistrationUrl", url: timeRegistrationUrl });
         }).catch(err => {
             console.error('Failed to copy after focus: ', err);
         });
