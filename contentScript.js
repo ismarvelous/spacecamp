@@ -85,6 +85,7 @@ function renderBasecampTimeButton() {
 
     const render = () => {
         let clipboardText = createClipboardText(labels, document.title);
+        let jLabels = labels.join(", ");
 
         const html = `
             <div id="spcamp-labels" class="todos-form__field">
