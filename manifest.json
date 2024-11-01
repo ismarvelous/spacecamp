@@ -1,17 +1,21 @@
 {
   "manifest_version": 3,
   "name": "Spacecamp",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Extra project management power for Basecamp 3, Helpscout and Timechimp users.",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
-      "matches": [ "https://3.basecamp.com/*", "https://secure.helpscout.net/conversation/*"],
+      "matches": ["*://*/*"],
       "js": ["contentScript.js"],
       "run_at": "document_idle"
     }
   ],
   "action": {
-    "default_icon": "icon.png"
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
   }
 }
