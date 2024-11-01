@@ -3,7 +3,10 @@
   "name": "Spacecamp",
   "version": "1.5.2",
   "description": "Extra project management power for Basecamp 3, Helpscout and Timechimp users.",
-  "permissions": ["activeTab", "clipboardWrite"],
+  "permissions": ["activeTab", "tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": [ "https://3.basecamp.com/*", "https://secure.helpscout.net/conversation/*"],

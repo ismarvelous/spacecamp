@@ -1,15 +1,13 @@
 const textPattern = "{labels} | {title} | Opmerkingen:";
-const timeChimpUrl = "https://app.timechimp.com/registration/time/day";
+const timeRegistrationUrl = "https://app.timechimp.com/registration/time/day";
 
-let basecampClipboardText = "";
 let hostName = "";
+let basecampClipboardText = "";
 
 window.addEventListener('load', () => {
     initializeSpaceCamp();
 });
 
-
-// this is needed for basecamp as basecamp uses turbo to navigate between pages
 document.addEventListener('turbo:load', () => {
     initializeSpaceCamp();
 });
@@ -28,19 +26,7 @@ function initializeSpaceCamp() {
     }
 }
 
-function appendLabel(html, labels) {
-    const re = /(#(\w+)([-](\w+))*)/g;
-    let match = null;
-    const text = html.replace(/<[^>]*>?/gm, '');
-    while ((match = re.exec(text))) {
-        if (!match[1].startsWith("#updateLinkRel")) {
-            labels.push(match[1]);
-        }
-    }
-}
-
 function handleNavigationItemClicked(clickedItem) {
-    console.log(clickedItem);
     if (clickedItem === "register-time") {
         if (hostName === "3.basecamp.com") {
             copyToClipboard(basecampClipboardText);
@@ -48,64 +34,9 @@ function handleNavigationItemClicked(clickedItem) {
         else {
             copyToClipboard(createClipboardText([], document.title));
         }
+
+       chrome.runtime.sendMessage({ action: "openTimeRegistrationUrl", url: timeRegistrationUrl });
     }
-}
-
-function copyToClipboard(text) {
-    const focusListener = () => {
-        navigator.clipboard.writeText(text).then(() => {
-            console.log('Text copied to clipboard after focus:', text);
-        }).catch(err => {
-            console.error('Failed to copy after focus: ', err);
-        });
-
-        window.removeEventListener('focus', focusListener);
-    };
-
-    window.addEventListener('focus', focusListener);
-}
-
-function calculateListProgress() {
-    document.querySelectorAll("article.todolist").forEach((todoList) => {
-
-        // for todo list detail page
-        const overviewListTitle = todoList.querySelector("h3 a.todolist__permalink");
-        updateTotalCount(overviewListTitle, todoList, /\(([^)]+)\)/);
-
-        // for todo list detail page
-        const detailListTitle = todoList.querySelector("h3.todolist__title span a");
-        updateTotalCount(detailListTitle, todoList, /\(([^)]+)\)/);
-    });
-}
-
-function updateTotalCount(titleElement, todoList, regExp) {
-    if (titleElement && !titleElement.textContent.endsWith(")")) {
-        const todo = calculateTotal("ul.todos a", todoList, regExp);
-        const done = calculateTotal("ul.completed a", todoList, regExp);
-        titleElement.append(` (${todo}/${done})`);
-    }
-}
-
-function calculateTotal(selector, todolist, regExp) {
-    let total = 0;
-    todolist.querySelectorAll(selector).forEach((link) => {
-        if (isVisible(link)) {
-            const matches = regExp.exec(link.textContent);
-            if (matches) {
-                matches.forEach((entry) => {
-                    const num = parseInt(entry);
-                    if (num) {
-                        total += num;
-                    }
-                });
-            }
-        }
-    });
-    return total;
-}
-
-function isVisible(element) {
-    return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }
 
 function renderBasecampLabels() {
@@ -157,6 +88,74 @@ function renderBasecampLabels() {
             });
     } else {
         render();
+    }
+}
+
+function calculateListProgress() {
+    document.querySelectorAll("article.todolist").forEach((todoList) => {
+
+        // for todo list detail page
+        const overviewListTitle = todoList.querySelector("h3 a.todolist__permalink");
+        updateTotalCount(overviewListTitle, todoList, /\(([^)]+)\)/);
+
+        // for todo list detail page
+        const detailListTitle = todoList.querySelector("h3.todolist__title span a");
+        updateTotalCount(detailListTitle, todoList, /\(([^)]+)\)/);
+    });
+}
+
+function updateTotalCount(titleElement, todoList, regExp) {
+    if (titleElement && !titleElement.textContent.endsWith(")")) {
+        const todo = calculateTotal("ul.todos a", todoList, regExp);
+        const done = calculateTotal("ul.completed a", todoList, regExp);
+        titleElement.append(` (${todo}/${done})`);
+    }
+}
+
+function calculateTotal(selector, todolist, regExp) {
+    let total = 0;
+    todolist.querySelectorAll(selector).forEach((link) => {
+        if (isVisible(link)) {
+            const matches = regExp.exec(link.textContent);
+            if (matches) {
+                matches.forEach((entry) => {
+                    const num = parseInt(entry);
+                    if (num) {
+                        total += num;
+                    }
+                });
+            }
+        }
+    });
+    return total;
+}
+
+function isVisible(element) {
+    return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
+}
+
+function copyToClipboard(text) {
+    const focusListener = () => {
+        navigator.clipboard.writeText(text).then(() => {
+            console.log('Text copied to clipboard after focus:', text);
+        }).catch(err => {
+            console.error('Failed to copy after focus: ', err);
+        });
+
+        window.removeEventListener('focus', focusListener);
+    };
+
+    window.addEventListener('focus', focusListener);
+}
+
+function appendLabel(html, labels) {
+    const re = /(#(\w+)([-](\w+))*)/g;
+    let match = null;
+    const text = html.replace(/<[^>]*>?/gm, '');
+    while ((match = re.exec(text))) {
+        if (!match[1].startsWith("#updateLinkRel")) {
+            labels.push(match[1]);
+        }
     }
 }
 
