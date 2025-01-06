@@ -1,5 +1,5 @@
 const textPattern = "{labels} | {title} | Opmerkingen:";
-const timeRegistrationUrl = "https://app.timechimp.com/registration/time/day";
+const timeRegistrationUrl = "https://app.timeon.nl/#/";
 
 let hostName = "";
 let basecampClipboardText = "";

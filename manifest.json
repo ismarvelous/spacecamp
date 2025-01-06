@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Spacecamp",
-  "version": "1.6.0",
-  "description": "Extra project management power for Basecamp 3, Helpscout and Timechimp users.",
+  "version": "1.6.1",
+  "description": "Extra project management power for Basecamp 3, Helpscout and TimeOn users.",
   "permissions": ["activeTab", "tabs"],
   "background": {
     "service_worker": "background.js"
